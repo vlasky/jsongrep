@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   playground at 2^16.
 - `-r`/`--raw-output`: print matched strings without JSON quotes or escaping
   (like `jq -r`), enabling `VAR=$(... | jg -r field)` shell pipelines.
+- Property-based test suite (`tests/properties.rs`, using `proptest`):
+  parsing never panics on arbitrary or DSL-alphabet input, every parsed
+  query compiles to a DFA without panicking, and `Query` display always
+  produces parseable syntax that stabilizes under repeated reparse. These
+  properties guard the whole input space behind the display round-trip
+  fixes below.
 
 ### Fixed
 
@@ -49,6 +55,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   modifier on an empty operand (reachable via `QueryBuilder::new()
   .optional()`) now displays as the empty query it denotes instead of an
   unparseable bare `?`.
+- `Query` display elides sequence elements that display as the empty query
+  (the identity of concatenation), instead of emitting unparseable forms
+  like `foo..bar` for a hand-built sequence containing an empty
+  subsequence.
 
 ### Breaking
 
